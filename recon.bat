@@ -404,7 +404,7 @@ echo ║ This program is made for Educational purposes ONLY (I'm just kidding do
 echo ║                                                                                                     ║
 echo ║ Made By VickeKatt, you can contact me on Discord @vickekatt                                         ║
 echo ║                                                                                                     ║
-ECHO ║ RECON Version 3.2.4                                                                                 ║
+ECHO ║ RECON Version 3.2.5                                                                                 ║
 echo ╚═════════════════════════════════════════════════════════════════════════════════════════════════════╝
 pause
 goto menu
