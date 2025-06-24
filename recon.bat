@@ -6,27 +6,43 @@ echo WScript.Sleep 1 >> "%TempVBSFile%"
 echo WshShell.SendKeys "{F11}" >> "%TempVBSFile%"
 cscript //nologo "%TempVBSFile%"
 
-setlocal
+setlocal enabledelayedexpansion
 
-set "url=https://drive.google.com/uc?export=download&id=1JrJsc7j8fitDNTnR4BbjVqTYUsXNEVXC"
+set "localfile=recon.bat"
+set "tempfile=recon_new.bat"
+set "url=https://recon-hl1x.onrender.com/recon.bat"
 
-set "filename=recon.bat"
-
-echo Downloading last version of Recon V3...
-
-powershell -Command "Invoke-WebRequest -Uri '%url%' -OutFile '%filename%.new'"
-
-if exist "%filename%.new" (
-    echo Update finished.
-    move /Y "%filename%.new" "%filename%"
-    echo Download finished.
-) else (
-    echo Can't download update, check WiFi or C$ontact Author.
+:: Ladda ner senaste filen till temporär fil
+echo Checking for updates...
+curl -s -o "%tempfile%" "%url%"
+if errorlevel 1 (
+    echo Could not download update. Continuing without update check.
+    del "%tempfile%" 2>nul
+    goto menu
 )
 
-pause
-endlocal
-
+:: Jämför filer (byte för byte)
+fc /b "%localfile%" "%tempfile%" >nul
+if errorlevel 1 (
+    echo A new version is available.
+    choice /m "Do you want to update now?"
+    if errorlevel 2 (
+        echo Update skipped.
+        del "%tempfile%"
+        goto menu
+    ) else (
+        echo Updating...
+        copy /y "%tempfile%" "%localfile%" >nul
+        del "%tempfile%"
+        echo Update complete. Restarting program...
+        timeout /t 2 /nobreak >nul
+        start "" "%localfile%"
+        exit /b
+    )
+) else (
+    echo You have the latest version.
+    del "%tempfile%"
+goto menu 
 
 :menu
 chcp 65001 >nul
